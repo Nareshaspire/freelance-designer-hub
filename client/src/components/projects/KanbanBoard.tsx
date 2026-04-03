@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default function KanbanBoard({ projectId }: Props) {
-  const { columns, loading, moveTask, createTask, updateTask, deleteTask } = useKanban(projectId);
+  const { columns, loading, moveTask, updateTask, refreshTasks } = useKanban(projectId);
   const [draggingTask, setDraggingTask] = useState<Task | null>(null);
   const [addingToCol, setAddingToCol] = useState<TaskStatus | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -119,8 +119,8 @@ export default function KanbanBoard({ projectId }: Props) {
         <TaskForm
           projectId={projectId}
           task={undefined}
-          onSuccess={async task => {
-            await createTask({ ...task, status: addingToCol });
+          onSuccess={async () => {
+            await refreshTasks();
             setAddingToCol(null);
           }}
           onCancel={() => setAddingToCol(null)}
@@ -131,8 +131,8 @@ export default function KanbanBoard({ projectId }: Props) {
         <TaskForm
           projectId={projectId}
           task={editingTask}
-          onSuccess={async updated => {
-            await updateTask(updated.id, updated);
+          onSuccess={async () => {
+            await refreshTasks();
             setEditingTask(null);
           }}
           onCancel={() => setEditingTask(null)}

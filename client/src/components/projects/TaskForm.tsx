@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Task, TaskStatus, TaskPriority, CreateTaskInput } from '@/services/projects';
+import { Task, TaskStatus, TaskPriority, CreateTaskInput, createTask as apiCreateTask, updateTask as apiUpdateTask } from '@/services/projects';
 
 interface Props {
   projectId: string;
   milestoneId?: string;
   task?: Task;
-  onSuccess?: (task: Task) => void;
+  onSuccess?: (task?: Task) => void;
   onCancel?: () => void;
 }
 
@@ -40,11 +40,9 @@ export default function TaskForm({ projectId, milestoneId, task, onSuccess, onCa
       };
       let result: Task;
       if (task) {
-        const { updateTask } = await import('@/services/projects');
-        result = await updateTask(task.id, payload);
+        result = await apiUpdateTask(task.id, payload);
       } else {
-        const { createTask } = await import('@/services/projects');
-        result = await createTask(projectId, payload);
+        result = await apiCreateTask(projectId, payload);
       }
       onSuccess?.(result);
     } catch (err) {

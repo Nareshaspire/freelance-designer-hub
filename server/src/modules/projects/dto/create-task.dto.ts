@@ -20,11 +20,11 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsEnum(TaskStatus)
-  status?: TaskStatus = TaskStatus.TODO;
+  status?: TaskStatus;
 
   @IsOptional()
   @IsEnum(TaskPriority)
-  priority?: TaskPriority = TaskPriority.MEDIUM;
+  priority?: TaskPriority;
 
   @IsOptional()
   @IsString()
@@ -41,5 +41,5 @@ export class CreateTaskDto {
   @IsOptional()
   @IsNumber()
   @IsInt()
-  order?: number = 0;
+  order?: number;
 }

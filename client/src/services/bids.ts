@@ -11,7 +11,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
     const error = await res.text();
     throw new Error(error || `Request failed with status ${res.status}`);
   }
-  if (res.status === 204) return undefined as unknown as T;
+  if (res.status === 204 || res.headers.get('content-length') === '0') return undefined as T;
   return res.json();
 }
 
@@ -27,7 +27,7 @@ export function updateBid(id: string, data: Partial<CreateBidInput>): Promise<Bi
 }
 
 export function withdrawBid(id: string): Promise<void> {
-  return apiFetch(`/api/bids/${id}/withdraw`, { method: 'DELETE' });
+  return apiFetch(`/api/bids/${id}`, { method: 'DELETE' });
 }
 
 export function acceptBid(id: string): Promise<Bid> {
