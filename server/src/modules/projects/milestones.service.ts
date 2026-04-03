@@ -30,6 +30,12 @@ export class MilestonesService {
     if (!project) {
       throw new NotFoundException(`Project ${projectId} not found`);
     }
+    // Only the client or assigned freelancer may create milestones
+    if (project.clientId !== userId && project.freelancerId !== userId) {
+      throw new ForbiddenException(
+        'Only project participants can create milestones',
+      );
+    }
 
     const milestone = this.milestoneRepository.create({ ...dto, projectId });
     return this.milestoneRepository.save(milestone);

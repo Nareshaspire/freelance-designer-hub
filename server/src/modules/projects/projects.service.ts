@@ -60,12 +60,13 @@ export class ProjectsService {
     }
 
     if (skills && skills.length > 0) {
-      // Filter projects whose requiredSkills contains at least one of the requested skills
-      skills.forEach((skill, index) => {
-        qb.andWhere(`project.requiredSkills LIKE :skill${index}`, {
-          [`skill${index}`]: `%${skill}%`,
-        });
-      });
+      // Filter projects whose requiredSkills contains at least one of the requested skills (OR logic)
+      const skillConditions = skills.map((_, index) => `project.requiredSkills LIKE :skill${index}`);
+      const skillParams = skills.reduce<Record<string, string>>((acc, skill, index) => {
+        acc[`skill${index}`] = `%${skill}%`;
+        return acc;
+      }, {});
+      qb.andWhere(`(${skillConditions.join(' OR ')})`, skillParams);
     }
 
     switch (sort) {
