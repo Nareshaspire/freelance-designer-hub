@@ -155,7 +155,7 @@ export function useVideoCall(token: string | null) {
         setCallState('idle');
       }
     },
-    [token, sessionId],
+    [token],
   );
 
   const answerCall = useCallback(
@@ -185,8 +185,10 @@ export function useVideoCall(token: string | null) {
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
 
-        socket.emit('call_answer', { sessionId: incomingCall.sessionId, sdp: answer });
+        // Set sessionId ref before emitting to avoid race conditions with ICE candidates
+        sessionIdRef.current = incomingCall.sessionId;
         setSessionId(incomingCall.sessionId);
+        socket.emit('call_answer', { sessionId: incomingCall.sessionId, sdp: answer });
         setCallState('active');
         startTimer();
         setIncomingCall(null);

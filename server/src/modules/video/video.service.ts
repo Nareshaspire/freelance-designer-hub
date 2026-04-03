@@ -62,7 +62,7 @@ export class VideoService {
     return this.callSessionRepo
       .createQueryBuilder('cs')
       .where('cs.initiatorId = :userId', { userId })
-      .orWhere("cs.participants::text LIKE :pattern", { pattern: `%"userId":"${userId}"%` })
+      .orWhere("cs.participants::text LIKE :pattern", { pattern: '%"userId":"' + userId.replace(/[%_\\]/g, '\\$&') + '"%' })
       .orderBy('cs.createdAt', 'DESC')
       .take(50)
       .getMany();

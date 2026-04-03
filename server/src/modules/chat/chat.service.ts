@@ -46,7 +46,7 @@ export class ChatService {
           .createQueryBuilder('m')
           .where('m.conversationId = :conversationId', { conversationId: conv.id })
           .andWhere('m.deletedAt IS NULL')
-          .andWhere("m.readBy NOT LIKE :pattern", { pattern: `%"userId":"${userId}"%` })
+          .andWhere("m.readBy NOT LIKE :pattern", { pattern: '%"userId":"' + userId.replace(/[%_\\]/g, '\\$&') + '"%' })
           .getCount();
         return { ...conv, lastMessage, unreadCount };
       }),

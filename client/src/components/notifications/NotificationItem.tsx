@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import { Notification } from '../../hooks/useNotifications';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -19,11 +20,12 @@ interface Props {
 }
 
 export function NotificationItem({ notification, onRead }: Props) {
+  const router = useRouter();
   return (
     <div
       onClick={() => {
         if (!notification.isRead) onRead(notification.id);
-        if (notification.link) window.location.href = notification.link;
+        if (notification.link) router.push(notification.link);
       }}
       style={{
         display: 'flex',

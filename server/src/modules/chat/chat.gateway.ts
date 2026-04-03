@@ -142,7 +142,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  sendNotificationToUser(userId: string, notification: any) {
+  sendNotificationToUser(userId: string, notification: Record<string, unknown>) {
     const socketId = this.userSocketMap.get(userId);
     if (socketId) {
       this.server.to(socketId).emit('notification', notification);

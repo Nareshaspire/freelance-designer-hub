@@ -10,7 +10,12 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { VideoService } from './video.service';
+import { InitiateCallDto } from './dto/initiate-call.dto';
+
+interface CallInitiatePayload extends InitiateCallDto {
+  recipientId: string;
+  sdp?: RTCSessionDescriptionInit;
+}
 
 @WebSocketGateway({ cors: { origin: '*' }, namespace: '/video' })
 export class VideoGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -51,7 +56,7 @@ export class VideoGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('call_initiate')
-  async handleCallInitiate(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+  async handleCallInitiate(@ConnectedSocket() client: Socket, @MessageBody() data: CallInitiatePayload) {
     const userId = client.data.userId;
     if (!userId) return { error: 'Unauthorized' };
     try {
