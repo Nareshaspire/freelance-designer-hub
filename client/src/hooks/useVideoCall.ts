@@ -23,6 +23,8 @@ export function useVideoCall(token: string | null) {
   const remoteStreamRef = useRef<MediaStream | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  // Use a ref to track the current sessionId so ICE candidate handlers always have the latest value
+  const sessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -131,7 +133,7 @@ export function useVideoCall(token: string | null) {
 
         pc.onicecandidate = ({ candidate }) => {
           if (candidate) {
-            socket.emit('ice_candidate', { candidate, targetUserId: recipientId, sessionId: sessionId });
+            socket.emit('ice_candidate', { candidate, targetUserId: recipientId, sessionId: sessionIdRef.current });
           }
         };
 
@@ -143,7 +145,10 @@ export function useVideoCall(token: string | null) {
         await pc.setLocalDescription(offer);
 
         socket.emit('call_initiate', { conversationId, type, recipientId, sdp: offer }, (res: any) => {
-          if (res?.sessionId) setSessionId(res.sessionId);
+          if (res?.sessionId) {
+            setSessionId(res.sessionId);
+            sessionIdRef.current = res.sessionId;
+          }
         });
       } catch (err) {
         console.error('Failed to initiate call:', err);
@@ -243,7 +248,7 @@ export function useVideoCall(token: string | null) {
       if (!token) return;
       const socket = getVideoSocket(token);
       try {
-        const screenStream = await (navigator.mediaDevices as any).getDisplayMedia({ video: true });
+        const screenStream = await (navigator.mediaDevices as MediaDevices & { getDisplayMedia(constraints?: DisplayMediaStreamOptions): Promise<MediaStream> }).getDisplayMedia({ video: true });
         const screenTrack = screenStream.getVideoTracks()[0];
         if (peerConnectionRef.current) {
           const sender = peerConnectionRef.current.getSenders().find((s) => s.track?.kind === 'video');
