@@ -68,7 +68,7 @@ export async function sendInvoice(id: string) {
 }
 
 export async function payInvoice(id: string, method: string) {
-  const res = await axios.post(`${API_BASE}/invoices/${id}/pay`, { method }, { headers: getHeaders() });
+  const res = await axios.post(`${API_BASE}/invoices/${id}/pay`, { invoiceId: id, paymentMethod: method }, { headers: getHeaders() });
   return res.data;
 }
 

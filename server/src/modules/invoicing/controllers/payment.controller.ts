@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiHeader } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -53,7 +54,7 @@ export class PaymentController {
       relations: ['invoice'],
     });
     if (!payment) {
-      throw new BadRequestException(`Payment ${id} not found`);
+      throw new NotFoundException(`Payment ${id} not found`);
     }
     return payment;
   }

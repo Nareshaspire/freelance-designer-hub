@@ -56,7 +56,7 @@ export default function InvoiceCard({ invoice, onView, onSend, onDelete }: Invoi
         >
           View
         </button>
-        {(invoice.status === 'draft' || invoice.status === 'viewed') && (
+        {invoice.status === 'draft' && (
           <button
             onClick={() => onSend(invoice.id)}
             className="flex-1 text-sm px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium transition-colors"
@@ -64,12 +64,14 @@ export default function InvoiceCard({ invoice, onView, onSend, onDelete }: Invoi
             Send
           </button>
         )}
-        <button
-          onClick={() => onDelete(invoice.id)}
-          className="text-sm px-3 py-1.5 rounded-md bg-red-50 text-red-700 hover:bg-red-100 font-medium transition-colors"
-        >
-          Delete
-        </button>
+        {invoice.status === 'draft' && (
+          <button
+            onClick={() => onDelete(invoice.id)}
+            className="text-sm px-3 py-1.5 rounded-md bg-red-50 text-red-700 hover:bg-red-100 font-medium transition-colors"
+          >
+            Delete
+          </button>
+        )}
       </div>
     </div>
   );

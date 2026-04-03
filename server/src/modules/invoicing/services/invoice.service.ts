@@ -369,7 +369,7 @@ export class InvoiceService {
     dto: GenerateInvoiceDto,
     freelancerId: string,
   ): Promise<Invoice> {
-    const { projectId, milestoneIds = [], includeTrackedTime = false } = dto;
+    const { projectId, clientId, milestoneIds = [], includeTrackedTime = false } = dto;
 
     const items = milestoneIds.map((milestoneId, index) => ({
       description: `Milestone ${index + 1} (ID: ${milestoneId})${includeTrackedTime ? ' + tracked time' : ''}`,
@@ -396,7 +396,7 @@ export class InvoiceService {
     const invoice = this.invoiceRepository.create({
       projectId,
       milestoneId: milestoneIds[0] || null,
-      clientId: 'placeholder-client-id',
+      clientId,
       freelancerId,
       items,
       subtotal: 0,

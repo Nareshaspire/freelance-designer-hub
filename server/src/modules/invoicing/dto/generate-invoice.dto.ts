@@ -6,6 +6,10 @@ export class GenerateInvoiceDto {
   @IsUUID()
   projectId: string;
 
+  @ApiProperty({ description: 'Client UUID' })
+  @IsUUID()
+  clientId: string;
+
   @ApiPropertyOptional({ type: [String], description: 'Milestone UUIDs' })
   @IsOptional()
   @IsArray()
